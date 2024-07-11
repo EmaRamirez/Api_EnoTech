@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Vino</title>
-</head>
-<body>
+
+{% include 'head.html' %}
+
+
     <h1>Agregar Nuevo Vino</h1>
     <form action="{{ url_for('addWine') }}" method="POST" enctype="multipart/form-data">
         <label for="winery">Bodega:</label>
@@ -26,5 +22,5 @@
 
         <button type="submit">Agregar</button>
     </form>
-</body>
-</html>
+
+    {% include 'footer.html' %}

@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
+{% include 'head.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
 
-<body>
     <form action="/update" method="post" enctype="multipart/form-data">
         {%for item in datos%}
         <div>
@@ -40,6 +33,6 @@
         </div>
         {% endfor %}
     </form>
-</body>
 
-</html>
+
+    {% include 'footer.html' %}
