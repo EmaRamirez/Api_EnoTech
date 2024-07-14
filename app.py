@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request, url_for
+from flask import Flask, render_template, redirect, request, url_for,send_from_directory
 from flaskext.mysql import MySQL
 import os
 from werkzeug.utils import secure_filename
@@ -26,34 +26,39 @@ def callBD(query, value=0):
     conexion.commit()
     return cursor.fetchall()
 
+@app.route('/images/<path:image>')
+def uploads(image):
+    return send_from_directory(os.path.join('static/uploads'),image)
+
+
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html')
+    return render_template('front-end/index.html')
 
 @app.route('/nosotros')
 def nosotros():
-    return render_template('nosotros.html')
+    return render_template('front-end/nosotros.html')
 
 @app.route('/contacto')
 def contacto():
-    return render_template('contacto.html')
+    return render_template('front-end/contacto.html')
 
 @app.route('/productos')
 def productos():
-    return render_template('productos.html')
+    return render_template('front-end/productos.html')
 
 @app.route('/getAll')
 def getAll():
     sql = "SELECT a.idWine, a.winery, a.wine, b.country, a.image FROM wines AS a INNER JOIN Locations AS b ON a.id_Location = b.idLocation"
     datos = callBD(sql)
-    return render_template('getAll.html', wines=datos)
+    return render_template('back-end/getAll.html', wines=datos)
 
 @app.route('/create')
 def create():
     sql = "SELECT idLocation, country FROM Locations"
     datos = callBD(sql)
-    return render_template('create.html', locations=datos)
+    return render_template('back-end/create.html', locations=datos)
 
 @app.route('/addWine', methods=["POST"])
 def addWine():
@@ -83,7 +88,7 @@ def edit(id):
     query = "SELECT idLocation, country FROM Locations"
     wine = callBD(sql, id)
     locations = callBD(query)
-    return render_template('edit.html', datos=wine, locations=locations)
+    return render_template('back-end/edit.html', datos=wine, locations=locations)
 
 @app.route('/update', methods=["POST"])
 def update():
