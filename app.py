@@ -90,9 +90,9 @@ def addWine():
 @app.route('/edit/<int:id>')
 def edit(id):
     sql = "SELECT a.idWine, a.winery, a.wine,b.idLocation ,b.country, a.image FROM wines AS a INNER JOIN Locations AS b ON a.id_Location = b.idLocation WHERE idWine = %s"
-    query = "SELECT idLocation, country FROM Locations"
+    query = "select idLocation,country from locations where idLocation != (SELECT id_location FROM wines where idWine=%s)"
     wine = callBD(sql, id,'fetchone')
-    locations = callBD(query)
+    locations = callBD(query,id)
     return render_template('back-end/edit.html', datos=wine, locations=locations)
 
 @app.route('/update', methods=["POST"])
