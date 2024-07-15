@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, request, url_for,send_from_d
 from flaskext.mysql import MySQL
 import os
 from werkzeug.utils import secure_filename
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -74,7 +75,9 @@ def addWine():
         _image = request.files["txtFoto"]
 
         if _image:
-            filename = secure_filename(_image.filename)
+            now = datetime.now()
+            tiempo = now.strftime("%d%m%y,%H%M%S")
+            filename = tiempo +"_"+_image.filename
             _image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         else:
             filename = "default.jpg"
@@ -109,7 +112,9 @@ def update():
         imageDelete =callBD(query,__id,"fetchone")
         os.remove(os.path.join(app.config['UPLOAD_FOLDER'],imageDelete[0]))
 
-        filename = secure_filename(_image.filename)
+        now = datetime.now()
+        tiempo = now.strftime("%d%m%y,%H%M%S")
+        filename = tiempo + "_" + _image.filename
         _image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
         update = [_winery, _wine, _location, filename, __id]
