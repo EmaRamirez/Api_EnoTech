@@ -22,14 +22,14 @@
             <div class="form-group">
                 <label for="pais" class="form-label">Pais</label>
                 <select name="location" id="pais" class="form-select">
-                    <option value="default">{{datos[3]}}</option>
+                    <option value="{{datos[3]}}">{{datos[4]}}</option>
                     {%for item in locations%}
                     <option value="{{item[0]}}">{{item[1]}}</option>
                     {% endfor %}
                 </select>
             </div>
             <div class="form-group mb-2">
-                <img src='/images/{{datos[4]}}' alt="Fotos" width="100" class="img-thumbnail">
+                <img src='/images/{{datos[5]}}' alt="Fotos" width="100" class="img-thumbnail">
             </div>
             <div class="form-group">
                 <label for="foto" class="form-label">Foto</label>

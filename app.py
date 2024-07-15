@@ -23,6 +23,7 @@ def callBD(query:str, value:str="",devolver:str ='fetchall'):
         cursor.execute(query)
     else:
         cursor.execute(query, value)
+      
     if devolver == "fetchone":
         datos = cursor.fetchone()
     else:
@@ -88,7 +89,7 @@ def addWine():
 
 @app.route('/edit/<int:id>')
 def edit(id):
-    sql = "SELECT a.idWine, a.winery, a.wine, b.country, a.image FROM wines AS a INNER JOIN Locations AS b ON a.id_Location = b.idLocation WHERE idWine = %s"
+    sql = "SELECT a.idWine, a.winery, a.wine,b.idLocation ,b.country, a.image FROM wines AS a INNER JOIN Locations AS b ON a.id_Location = b.idLocation WHERE idWine = %s"
     query = "SELECT idLocation, country FROM Locations"
     wine = callBD(sql, id,'fetchone')
     locations = callBD(query)
@@ -110,11 +111,14 @@ def update():
 
         filename = secure_filename(_image.filename)
         _image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-    else:
-        filename = "default.jpg"
 
-    update = [_winery, _wine, _location, filename, __id]
-    query = "UPDATE wines SET winery=%s, wine=%s, id_Location=%s, image=%s WHERE idWine=%s"
+        update = [_winery, _wine, _location, filename, __id]
+        query = "UPDATE wines SET winery=%s, wine=%s, id_Location=%s, image=%s WHERE idWine=%s"
+    else:
+        update = [_winery, _wine, _location, __id]
+        query = "UPDATE wines SET winery=%s, wine=%s, id_Location=%s WHERE idWine=%s"
+
+    
     callBD(query, update)
     return redirect(url_for('getAll'))
 
