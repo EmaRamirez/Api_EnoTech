@@ -16,15 +16,19 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 mysql = MySQL()
 mysql.init_app(app)
 
-def callBD(query, value=0):
-    conexion = mysql.connect()
-    cursor = conexion.cursor()
-    if value == 0:
+def callBD(query:str, value:str="",devolver:str ='fetchall'):
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    if value == "":
         cursor.execute(query)
     else:
         cursor.execute(query, value)
-    conexion.commit()
-    return cursor.fetchall()
+    if devolver == "fetchone":
+        datos = cursor.fetchone()
+    else:
+        datos = cursor.fetchall()
+    conn.commit()
+    return datos
 
 @app.route('/images/<path:image>')
 def uploads(image):
@@ -86,7 +90,7 @@ def addWine():
 def edit(id):
     sql = "SELECT a.idWine, a.winery, a.wine, b.country, a.image FROM wines AS a INNER JOIN Locations AS b ON a.id_Location = b.idLocation WHERE idWine = %s"
     query = "SELECT idLocation, country FROM Locations"
-    wine = callBD(sql, id)
+    wine = callBD(sql, id,'fetchone')
     locations = callBD(query)
     return render_template('back-end/edit.html', datos=wine, locations=locations)
 
@@ -98,7 +102,12 @@ def update():
     _location = request.form["location"]
     _image = request.files["image"]
 
+  
     if _image and _image.filename != '':
+        query = 'select image from wines where idWine=%s'
+        imageDelete =callBD(query,__id,"fetchone")
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER'],imageDelete[0]))
+
         filename = secure_filename(_image.filename)
         _image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     else:
@@ -111,6 +120,9 @@ def update():
 
 @app.route('/delete/<int:id>')
 def delete(id):
+    query = "select image from wines where idWine=%s"
+    image = callBD(query,id,"fetchone")
+    os.remove(os.path.join(app.config['UPLOAD_FOLDER'],image[0]))
     query = "DELETE FROM wines WHERE idWine = %s"
     callBD(query, id)
     return redirect(url_for('getAll'))

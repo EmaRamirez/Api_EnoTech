@@ -1,36 +1,40 @@
 {% include 'back-end/head.html' %}
 
-    <form action="/update" method="post" enctype="multipart/form-data">
-        {%for item in datos%}
-        <div>
-            <input type="text" value=" {{item[0]}}" name="id" hidden>
-        </div>
-        <div>
-            <label for="winery">Vino</label>
-            <input type="text" id="winery" name="winery" value="{{item[1]}}">
-        </div>
-        <div>
-            <label for="wine">Cosecha</label>
-            <input type="text" id="wine" name="wine" value="{{item[2]}}">
-        </div>
-        <div>
-            <label for="pais">Pais</label>
-            <select name="location" id="pais">
-                <option value="default">{{item[3]}}</option>
-                {%for item in locations%}
-                <option value="{{item[0]}}">{{item[1]}}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div>
-            <h3>EN ESTE LUGAR VA A ESTAR ALOJADO LA IMAGEN QUE ESTARA GUARDADA EN LA BASE DE DATOS</h3>
-            <label for="foto">Foto</label>
-            <input type="file" id="foto" name="image">
-        </div>
-        <div>
-            <input type="submit" value="Realizar cambios">
-        </div>
-        {% endfor %}
-    </form>
 
-    {% include 'back-end/footer.html' %}
+<form action="/update" method="post" enctype="multipart/form-data">
+
+    <div>
+        <input type="text" value=" {{datos[0]}}" name="id" hidden>
+    </div>
+    <div>
+        <label for="winery">Vino</label>
+        <input type="text" id="winery" name="winery" value="{{datos[1]}}">
+    </div>
+    <div>
+        <label for="wine">Cosecha</label>
+        <input type="text" id="wine" name="wine" value="{{datos[2]}}">
+    </div>
+    <div>
+        <label for="pais">Pais</label>
+        <select name="location" id="pais">
+            <option value="default">{{datos[3]}}</option>
+            {%for item in locations%}
+            <option value="{{item[0]}}">{{item[1]}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <img src='/images/{{datos[4]}}' alt="Fotos" width="100">
+    </div>
+    <div>
+        <label for="foto">Foto</label>
+        <input type="file" id="foto" name="image">
+    </div>
+    <div>
+        <input type="submit" value="Realizar cambios" class="btn btn-primary">
+        <a href={{url_for('getAll')}} class="btn btn-info">Volver</a>
+    </div>
+
+</form>
+
+{% include 'back-end/footer.html' %}
