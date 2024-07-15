@@ -1,26 +1,35 @@
-
 {% include 'back-end/head.html' %}
 
 
-    <h1>Agregar Nuevo Vino</h1>
-    <form action="{{ url_for('addWine') }}" method="POST" enctype="multipart/form-data">
-        <label for="winery">Bodega:</label>
-        <input type="text" id="winery" name="winery" required><br><br>
 
-        <label for="wine">Vino:</label>
-        <input type="text" id="wine" name="wine" required><br><br>
-
-        <label for="location">Ubicación:</label>
-        <select id="location" name="location" required>
-            {% for location in locations %}
+<div class="container">
+    <h1 style="text-align: center;">Agregar Nuevo Vino</h1>
+    <form action="/addWine" method="post" enctype="multipart/form-data" style="width: 60vw; margin: auto;">
+        <div class="mb-1">
+            <label for="winery" class="form-label">Bodega:</label>
+            <input type="text" id="winery" name="winery" required class="form-control">
+        </div>
+        <div class="mb-1">
+            <label for="wine" class="form-label">Vino:</label>
+            <input type="text" id="wine" name="wine" required class="form-control">
+        </div>
+        <div class="mb-1">
+            <label for="location" class="form-label">Ubicación:</label>
+            <select id="location" name="location" required class="form-select">
+                {% for location in locations %}
                 <option value="{{ location[0] }}">{{ location[1] }}</option>
-            {% endfor %}
-        </select><br><br>
-
-        <label for="txtFoto">Imagen:</label>
-        <input type="file" id="txtFoto" name="txtFoto"><br><br>
-
-        <button type="submit">Agregar</button>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-1">
+            <label for="txtFoto" class="form-label">Imagen:</label>
+            <input type="file" id="txtFoto" name="txtFoto" class="form-control">
+        </div>
+        <div class="mb-1">
+            <button type="submit" class="btn btn-success">Agregar</button>
+            <a href="/getAll" class="btn btn-info">Volver</a>
+        </div>
+       
     </form>
-
-    {% include 'back-end/footer.html' %}
+</div>
+{% include 'back-end/footer.html' %}

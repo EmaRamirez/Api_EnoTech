@@ -1,34 +1,36 @@
 {% include 'back-end/head.html' %}
 
-
-<button class="btn btn-outline-light" type="submit"><a href="/create"
-        class="d-inline-flex focus-ring py-1 px-2 text-decoration-none border rounded-2">Crear</a></button>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th scope="col">Vino</th>
-            <th scope="col">Cosecha</th>
-            <th scope="col">Pais de Cosecha</th>
-            <th scope="col">Imagen</th>
-            <th scope="col">opciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {%for item in wines%}
-        <tr>
-            <th scope="row">{{item[1]}}</td>
-            <td>{{item[2]}}</td>
-            <td>{{item[3]}}</td>
-            <td>
-                <img src="images/{{item[4]}}" alt="Image wine" width="100">
-            </td>
-            <td>
-                <a href="/edit/{{item[0]}}" class="btn btn-success">Editar</a>
-                <a href="/delete/{{item[0]}}" class="btn btn-danger" onclick="alert('¿Estas seguro de Eliminar esta fila?')">Borrar</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
+<div class="container">
+    <div class="mb-1">
+        <a href="/create" class="btn btn-info">Crear</a>
+    </div>
+    <table class="table table-hover" style="width: 80vw; margin: auto;">
+        <thead class="table-light">
+            <tr>
+                <th scope="col">Vino</th>
+                <th scope="col">Cosecha</th>
+                <th scope="col">Pais de Cosecha</th>
+                <th scope="col">Imagen</th>
+                <th scope="col">opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {%for item in wines%}
+            <tr>
+                <th scope="row">{{item[1]}}</td>
+                <td>{{item[2]}}</td>
+                <td>{{item[3]}}</td>
+                <td>
+                    <img src="images/{{item[4]}}" alt="Image wine" width="50">
+                </td>
+                <td>
+                    <a href="/edit/{{item[0]}}" class="btn btn-success">Editar</a>
+                    <a href="/delete/{{item[0]}}" class="btn btn-danger"
+                        onclick="alert('¿Estas seguro de Eliminar esta fila?')">Borrar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% include 'back-end/footer.html' %}
