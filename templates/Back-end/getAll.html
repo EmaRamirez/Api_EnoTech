@@ -4,11 +4,11 @@
     <div class="mb-2">
         <a href="/create" class="btn btn-info">Crear</a>
     </div>
-    <!-- <div class="mb-2">
-        <form action= method="post" enctype="text/plain">
-            <input type="text" class="form-control" placeholder="filtrar por nombre" style="width: 20vw;" name="filter">
+    <div class="mb-2">
+        <form action="/filtros" method="post" enctype="multipart/form-data" class="form-group">
+            <input type="text" class="form-control" placeholder="filtrar por nombre"  name="valor">
         </form>
-    </div> -->
+    </div>
     <table class="table table-hover" style="width: 80vw; margin: auto;">
         <thead class="table-light">
             <tr>
@@ -26,7 +26,7 @@
                 <td>{{item[2]}}</td>
                 <td>{{item[3]}}</td>
                 <td>
-                    <img src="images/{{item[4]}}" alt="Image wine" width="50">
+                    <img src="/images/{{item[4]}}" alt="Image wine" width="50">
                 </td>
                 <td>
                     <a href="/edit/{{item[0]}}" class="btn btn-success">Editar</a>

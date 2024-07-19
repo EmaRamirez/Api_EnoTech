@@ -54,11 +54,35 @@ def contacto():
 def productos():
     return render_template('front-end/productos.html')
 
+
+
 @app.route('/getAll')
-def getAll():
-    sql = "SELECT a.idWine, a.winery, a.wine, b.country, a.image FROM wines AS a INNER JOIN Locations AS b ON a.id_Location = b.idLocation"
-    datos = callBD(sql)
+@app.route('/getAll/<filtro>',methods=['GET'])
+def getAll(filtro =""):
+    if filtro != "":
+        valores=filtro
+        query = f"SELECT a.idWine, a.winery, a.wine, b.country, a.image FROM wines AS a INNER JOIN Locations AS b ON a.id_Location = b.idLocation where a.winery like '{valores}%'"
+        datos = callBD(query)
+    else:
+        query = "SELECT a.idWine, a.winery, a.wine, b.country, a.image FROM wines AS a INNER JOIN Locations AS b ON a.id_Location = b.idLocation"
+        datos = callBD(query)
     return render_template('back-end/getAll.html', wines=datos)
+
+
+
+@app.route('/filtros',methods=['POST','GET'])
+def filtros():
+    if request.method == 'POST':
+        valor = request.form['valor']
+        codigo =str(valor)
+        if codigo == '':
+            return redirect(url_for('getAll'))
+        
+        return redirect(url_for('getAll',filtro=codigo))
+    else:
+        return redirect(url_for('getAll'))
+   
+
 
 @app.route('/create')
 def create():
@@ -89,6 +113,9 @@ def addWine():
     except Exception as e:
         print("Error al agregar el vino:", e)
         return f"Error al agregar el vino: {e}", 400
+
+
+
 
 @app.route('/edit/<int:id>')
 def edit(id):
@@ -127,6 +154,10 @@ def update():
     callBD(query, update)
     return redirect(url_for('getAll'))
 
+
+
+
+
 @app.route('/delete/<int:id>')
 def delete(id):
     query = "select image from wines where idWine=%s"
@@ -135,6 +166,9 @@ def delete(id):
     query = "DELETE FROM wines WHERE idWine = %s"
     callBD(query, id)
     return redirect(url_for('getAll'))
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=8500)
