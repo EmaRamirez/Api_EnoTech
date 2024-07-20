@@ -85,90 +85,83 @@ def filtros():
    
 
 
-@app.route('/create')
+@app.route('/create',methods=['GET','POST'])
 def create():
-    sql = "SELECT idLocation, country FROM Locations"
-    datos = callBD(sql)
-    return render_template('back-end/create.html', locations=datos)
+    if request.method == 'GET':
+        sql = "SELECT idLocation, country FROM Locations"
+        datos = callBD(sql)
+        return render_template('back-end/create.html', locations=datos)
+    
+    elif request.method == 'POST':
+            try:
+                _winery = request.form["winery"]
+                _wine = request.form["wine"]
+                _location = request.form["location"]
+                _image = request.files["txtFoto"]
 
-@app.route('/addWine', methods=["POST"])
-def addWine():
-    try:
+                if _image:
+                    now = datetime.now()
+                    tiempo = now.strftime("%d%m%y,%H%M%S")
+                    filename = tiempo +"_"+_image.filename
+                    _image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                else:
+                    filename = "default.jpg"
+
+                datos = (_winery, _wine, _location, filename)
+                sql = "INSERT INTO wines (winery, wine, id_Location, image) VALUES (%s, %s, %s, %s)"
+                callBD(sql, datos)
+                return redirect(url_for('getAll'))
+                
+            except Exception as e:
+                print("Error al agregar el vino:", e)
+                return f"Error al agregar el vino: {e}", 400
+
+
+@app.route('/edit/<int:id>',methods=['GET','POST'])
+def edit(id):
+    if request.method == 'GET':
+        sql = "SELECT a.idWine, a.winery, a.wine,b.idLocation ,b.country, a.image FROM wines AS a INNER JOIN Locations AS b ON a.id_Location = b.idLocation WHERE idWine = %s"
+        query = "select idLocation,country from locations where idLocation != (SELECT id_location FROM wines where idWine=%s)"
+        wine = callBD(sql, id,'fetchone')
+        locations = callBD(query,id)
+        return render_template('back-end/edit.html', datos=wine, locations=locations)
+    
+    elif request.method == 'POST':
+        __id = request.form["id"]
         _winery = request.form["winery"]
         _wine = request.form["wine"]
         _location = request.form["location"]
-        _image = request.files["txtFoto"]
+        _image = request.files["image"]
 
-        if _image:
+        if _image and _image.filename != '':
+            query = 'select image from wines where idWine=%s'
+            imageDelete =callBD(query,__id,"fetchone")
+            
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'],imageDelete['image']))
+
             now = datetime.now()
             tiempo = now.strftime("%d%m%y,%H%M%S")
-            filename = tiempo +"_"+_image.filename
+            filename = tiempo + "_" + _image.filename
             _image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+            update = [_winery, _wine, _location, filename, __id]
+            query = "UPDATE wines SET winery=%s, wine=%s, id_Location=%s, image=%s WHERE idWine=%s"
         else:
-            filename = "default.jpg"
+            update = [_winery, _wine, _location, __id]
+            query = "UPDATE wines SET winery=%s, wine=%s, id_Location=%s WHERE idWine=%s"
 
-        datos = (_winery, _wine, _location, filename)
-        sql = "INSERT INTO wines (winery, wine, id_Location, image) VALUES (%s, %s, %s, %s)"
-        callBD(sql, datos)
+        
+        callBD(query, update)
         return redirect(url_for('getAll'))
-    except Exception as e:
-        print("Error al agregar el vino:", e)
-        return f"Error al agregar el vino: {e}", 400
-
-
-
-
-@app.route('/edit/<int:id>')
-def edit(id):
-    sql = "SELECT a.idWine, a.winery, a.wine,b.idLocation ,b.country, a.image FROM wines AS a INNER JOIN Locations AS b ON a.id_Location = b.idLocation WHERE idWine = %s"
-    query = "select idLocation,country from locations where idLocation != (SELECT id_location FROM wines where idWine=%s)"
-    wine = callBD(sql, id,'fetchone')
-    locations = callBD(query,id)
-    return render_template('back-end/edit.html', datos=wine, locations=locations)
-
-@app.route('/update', methods=["POST"])
-def update():
-    __id = request.form["id"]
-    _winery = request.form["winery"]
-    _wine = request.form["wine"]
-    _location = request.form["location"]
-    _image = request.files["image"]
-
-  
-    if _image and _image.filename != '':
-        query = 'select image from wines where idWine=%s'
-        imageDelete =callBD(query,__id,"fetchone")
-        os.remove(os.path.join(app.config['UPLOAD_FOLDER'],imageDelete[0]))
-
-        now = datetime.now()
-        tiempo = now.strftime("%d%m%y,%H%M%S")
-        filename = tiempo + "_" + _image.filename
-        _image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-
-        update = [_winery, _wine, _location, filename, __id]
-        query = "UPDATE wines SET winery=%s, wine=%s, id_Location=%s, image=%s WHERE idWine=%s"
-    else:
-        update = [_winery, _wine, _location, __id]
-        query = "UPDATE wines SET winery=%s, wine=%s, id_Location=%s WHERE idWine=%s"
-
-    
-    callBD(query, update)
-    return redirect(url_for('getAll'))
-
-
-
-
 
 @app.route('/delete/<int:id>')
 def delete(id):
     query = "select image from wines where idWine=%s"
     image = callBD(query,id,"fetchone")
-    os.remove(os.path.join(app.config['UPLOAD_FOLDER'],image[0]))
+    os.remove(os.path.join(app.config['UPLOAD_FOLDER'],image['image']))
     query = "DELETE FROM wines WHERE idWine = %s"
     callBD(query, id)
     return redirect(url_for('getAll'))
-
-
 
 
 if __name__ == '__main__':
