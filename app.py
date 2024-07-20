@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, request, url_for,send_from_directory
 from flaskext.mysql import MySQL
+from pymysql.cursors import DictCursor
 import os
 from werkzeug.utils import secure_filename
 from datetime import datetime
@@ -19,7 +20,7 @@ mysql.init_app(app)
 
 def callBD(query:str, value:str="",devolver:str ='fetchall'):
     conn = mysql.connect()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor=DictCursor)
     if value == "":
         cursor.execute(query)
     else:
